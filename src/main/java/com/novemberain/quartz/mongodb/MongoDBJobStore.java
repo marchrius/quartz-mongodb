@@ -109,7 +109,7 @@ public class MongoDBJobStore implements JobStore, Constants {
     @Override
     public void initialize(ClassLoadHelper loadHelper, SchedulerSignaler signaler)
             throws SchedulerConfigException {
-        Properties props = loadProperties(loadHelper);
+        Properties props = getProperties(loadHelper);
         try {
             assembler.build(this, loadHelper, signaler, props);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
@@ -128,6 +128,10 @@ public class MongoDBJobStore implements JobStore, Constants {
         ensureIndexes();
     }
 
+    public Properties getProperties(ClassLoadHelper loadHelper) {
+        return loadProperties(loadHelper);
+    }
+
     private Properties loadProperties(ClassLoadHelper loadHelper) {
         Properties props = new Properties();
         File propFile = new File(PROPERTIES_FILE_NAME);
@@ -138,7 +142,7 @@ public class MongoDBJobStore implements JobStore, Constants {
                 is = new BufferedInputStream(new FileInputStream(PROPERTIES_FILE_NAME));
                 props.load(is);
             } else {
-                is = loadHelper.getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME);
+                is = loadHelper.getResourceAsStream(PROPERTIES_FILE_NAME);
                 if (is != null) {
                     props.load(is);
                 }

@@ -4,27 +4,25 @@ This is a MongoDB-backed job store for the [Quartz scheduler](http://quartz-sche
 
 ## Maven Artifacts
 
-Artifacts are released to [Bintray](https://bintray.com/michaelklishin/maven/).
+Artifacts are released to [JitPack](https://jitpack.io/).
 
 If you are using Maven, add the following repository
 definition to your `pom.xml`:
 
-``` xml
+```xml
 <repositories>
-    <repository>
-        <id>michaelklishin</id>
-        <url>https://dl.bintray.com/michaelklishin/maven/</url>
-    </repository>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
 </repositories>
 ```
 
 With Gradle, add the following to your `build.gradle`:
 
-``` groovy
+```groovy
 repositories {
-    maven {
-        url "https://dl.bintray.com/michaelklishin/maven/"
-    }
+  maven { url 'https://jitpack.io' }
 }
 ```
 
@@ -33,9 +31,9 @@ repositories {
 
 With Maven:
 
-``` xml
+```xml
 <dependency>
-    <groupId>com.novemberain</groupId>
+    <groupId>com.github.marchrius</groupId>
     <artifactId>quartz-mongodb</artifactId>
     <version>2.2.0-rc2</version>
 </dependency>
@@ -43,17 +41,18 @@ With Maven:
 
 With Gradle:
 
-``` groovy
-compile "com.novemberain:quartz-mongodb:2.2.0-rc2"
+```groovy
+dependencies {
+    implementation 'com.github.marchrius:quartz-mongodb:2.2.0-rc2'
+}
 ```
 
 
 ## Usage
 
-Like most things in Quartz, this job store is configured
-via a property file, `quartz.properties`:
+Like most things in Quartz, this job store is being configured by property file, `quartz.properties`:
 
-``` ini
+```properties
 # Use the MongoDB store
 org.quartz.jobStore.class=com.novemberain.quartz.mongodb.MongoDBJobStore
 # MongoDB URI (optional if 'org.quartz.jobStore.addresses' is set)
@@ -85,13 +84,13 @@ The `org.quartz.jobStore.checkInErrorHandler.class` property controls the error 
 implementation.
 
 To shut down the JVM (which is the default), add the following key to `quartz.properties`
-
-    org.quartz.jobStore.checkInErrorHandler.class=com.novemberain.quartz.mongodb.cluster.KamikazeErrorHandler
-
+````properties
+org.quartz.jobStore.checkInErrorHandler.class=com.novemberain.quartz.mongodb.cluster.KamikazeErrorHandler
+````
 to ignore the failure:
-
-    org.quartz.jobStore.checkInErrorHandler.class=com.novemberain.quartz.mongodb.cluster.NoOpErrorHandler
-
+````properties
+org.quartz.jobStore.checkInErrorHandler.class=com.novemberain.quartz.mongodb.cluster.NoOpErrorHandler
+````
 
 
 
@@ -100,7 +99,9 @@ to ignore the failure:
 If you use [Quartzite](http://clojurequartz.info) or want your job classes to be available
 to Clojure code, use:
 
-    org.quartz.jobStore.class=com.novemberain.quartz.mongodb.DynamicMongoDBJobStore
+````properties
+org.quartz.jobStore.class=com.novemberain.quartz.mongodb.DynamicMongoDBJobStore
+````
 
 (this assumes Clojure jar is on classpath).
 
@@ -110,7 +111,7 @@ It will be serialized and stored as a `base64` string.
 
 If your `JobDataMap` only contains simple types, it may be stored directly inside MongoDB to save some performance.
 
-``` ini
+```properties
 org.quartz.jobStore.jobDataAsBase64=false
 ```
 
@@ -118,7 +119,7 @@ org.quartz.jobStore.jobDataAsBase64=false
 
 To enable clustering set the following property:
 
-``` ini
+```properties
 # turn clustering on:
 org.quartz.jobStore.isClustered=true
 
@@ -131,15 +132,15 @@ org.quartz.scheduler.instanceName=clusterName
 ```
 
 Each node in a cluster must have the same properties, except *instanceId*.
-To setup other clusters use different collection prefix:
+To set up other clusters use different collection prefix:
 
-``` ini
+```properties
 org.quartz.scheduler.collectionPrefix=yourCluster
 ```
 
 Different time settings for cluster operations:
 
-``` ini
+```properties
 # Frequency (in milliseconds) at which this instance checks-in to cluster.
 # Affects the rate of detecting failed instances.
 # Defaults to 7500 ms.
